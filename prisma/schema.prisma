@@ -15,6 +15,31 @@ datasource db {
 
 model User {
   id        Int      @id @default(autoincrement())
+  name      String 
   email     String   @unique
-  createdAt DateTime @default(now())
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at") 
+    @@map("user")
+}
+model  TTinformation {
+ id           String    @id @default(cuid())
+ tt           String     @unique
+ customerPhone  String   
+ location  Location?
+ createdAt    DateTime  @default(now()) @map("created_at")
+ updatedAt    DateTime  @updatedAt @map("updated_at") 
+ @@map("ttInfomation")
+}
+
+model Location {
+  id           String    @id @default(cuid())
+  TTnumber   String   @unique 
+  latitude  Float
+  longitude Float
+  tTinformation     TTinformation  @relation(fields: [TTinformationId], references: [id])
+  TTinformationId String  @unique //
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+    @@map("location")
 }
