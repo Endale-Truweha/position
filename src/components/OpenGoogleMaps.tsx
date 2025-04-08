@@ -1,4 +1,4 @@
-
+'use client';
 import Image from 'next/image'
 import { Button } from "@/components/ui/button"
 
@@ -19,9 +19,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MapPinned } from "lucide-react";
-import { Site, sites } from '@/lib/data';
+import { Site, fetchSites} from '@/lib/data';
 
 // Define your site interface and list (you can import this from your existing file)
 
@@ -51,6 +51,11 @@ const OpenGoogleMaps = () => {
   const [sitesSorted, setSitesSorted] = useState<SiteWithDistance[]>([]);
   const [selected, setSelected] = useState("driving") // Default value
   const [loading, setLoading] = useState(false);
+  const [sites, setSites] = useState<Site[]>([]);
+
+  useEffect(() => {
+    fetchSites().then(setSites);
+  }, []);
 
   const handleGetLocation = () => {
     if (!navigator.geolocation) {
@@ -69,8 +74,9 @@ const OpenGoogleMaps = () => {
         // Calculate distance and sort sites by proximity
         const sortedSites = sites
           .map((site) => {
-            const shopLat = parseFloat(site.Uni_Latitude);
-            const shopLng = parseFloat(site.Uni_Longitude);
+            const shopLat = parseFloat(site.location?.latitude?.toString() ?? '0');
+            const shopLng = parseFloat(site.location?.longitude?.toString() ?? '0');
+            
             const distance = haversine(userLat, userLng, shopLat, shopLng);
             return { ...site, distance };
           })
@@ -169,15 +175,15 @@ const OpenGoogleMaps = () => {
         {sitesSorted.map((site) => (
 
           <Card
-            key={site.SiteID}
+            key={site.id}
             onClick={() =>
-              openGoogleMaps(parseFloat(site.Uni_Latitude), parseFloat(site.Uni_Longitude))
+              openGoogleMaps(parseFloat(site.location?.latitude?.toString() ?? '0'), parseFloat(site.location?.longitude?.toString() ?? '0'))
             }
          className="m-4 bg-transparent hover:bg-ethGray-100"
           >
   <CardHeader>
-<CardTitle>{site.Region}--{site.zone} </CardTitle>
-<CardDescription>Site ID : {site.SiteID}</CardDescription>
+<CardTitle>custemer name </CardTitle>
+<CardDescription>Site ID : {site.id}</CardDescription>
 </CardHeader>
 
     

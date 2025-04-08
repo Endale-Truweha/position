@@ -1,4 +1,4 @@
-// components/MapsNavigator.tsx
+/* // components/MapsNavigator.tsx
 "use client";
 
 import { sites } from "@/lib/data";
@@ -84,3 +84,13 @@ export default function MapsNavigator() {
     </div>
   );
 }
+ */
+import React from 'react'
+
+function MapsNavigator() {
+  return (
+    <div>MapsNavigator</div>
+  )
+}
+
+export default MapsNavigator

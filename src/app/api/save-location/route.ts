@@ -19,18 +19,19 @@ export async function POST(req: Request) {
 
     // TODO: Save to database using Prisma or another method
 
-   await prisma.location.upsert({
-    where: { TTnumber: slug },
-    update: {
-      latitude,
-      longitude,
-    },
-    create: {
-      TTnumber :slug,
-      latitude,
-      longitude,
-    },
-  });
+    await prisma.location.upsert({
+      where: { TTnumber: slug },
+      update: { latitude, longitude },
+      create: {
+        TTnumber: slug,
+        latitude,
+        longitude,
+        ttinformation: {
+          connect: { tt: slug },
+        },
+      },
+    });
+    
 
     return NextResponse.json(
       { message: "Location saved successfully!" },

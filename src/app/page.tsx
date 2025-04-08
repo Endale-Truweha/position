@@ -1,5 +1,5 @@
 "use client";
-import MapsNavigator from '@/components/MapsNavigator';
+
 import OpenGoogleMaps from '@/components/OpenGoogleMaps';
 
 import SplashScreen from '@/components/SplashScreen';
@@ -15,7 +15,7 @@ function Page() {  // ✅ Renamed to "Page"
       ) : (
         <main>
           <OpenGoogleMaps />
-          <MapsNavigator/>
+       
         </main>
       )}
     </div>

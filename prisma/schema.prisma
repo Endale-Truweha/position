@@ -21,7 +21,7 @@ model User {
   updatedAt    DateTime  @updatedAt @map("updated_at") 
     @@map("user")
 }
-model  TTinformation {
+model  Ttinformation {
  id           String    @id @default(cuid())
  tt           String     @unique
  customerPhone  String   
@@ -36,7 +36,7 @@ model Location {
   TTnumber   String   @unique 
   latitude  Float
   longitude Float
-  tTinformation     TTinformation  @relation(fields: [TTinformationId], references: [id])
+  ttinformation     Ttinformation  @relation(fields: [TTinformationId], references: [id])
   TTinformationId String  @unique //
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @updatedAt @map("updated_at")
