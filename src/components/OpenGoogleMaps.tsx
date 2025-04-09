@@ -1,5 +1,5 @@
 'use client';
-import Image from 'next/image'
+/* import Image from 'next/image' */
 import { Button } from "@/components/ui/button"
 
 import {
@@ -124,10 +124,10 @@ const OpenGoogleMaps = () => {
   };
 
   return (
-    <div className="flex flex-col items-center m-12 container     ">
+    <div className="flex flex-col items-center m-12 container   space-y-7    ">
 
 
-<Image
+{/* <Image
         src={"/5G Logo.png"}
         alt="Picture of the author"
      
@@ -136,21 +136,21 @@ const OpenGoogleMaps = () => {
           objectFit: 'contain',
         }}
       className="-z-20 opacity-10"
-      />
+      /> */}
 
-     <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Get Directions to Nearest 5G Networks</h1>
+     <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Find Directions to Residential Customers</h1>
       
       {/* Button to trigger geolocation */}
-      <div className=" grid grid-cols-1 md:grid-cols-2  place-items-center gap-4">
+      <div className=" grid grid-cols-1 md:grid-cols-2  place-items-center gap-6">
         
       
       <Button
       variant="outline"
         onClick={handleGetLocation}
-       className="rounded-[0] mt-10 scroll-m-20 border-b px-6  py-6 bg-transparent hover:bg-ethGray-200 underline  text-ethBlack-500 text-3xl font-semibold tracking-tight transition-colors first:mt-0"
+       className="rounded-[0] mt-20 scroll-m-20 border-b px-6  py-6 bg-transparent hover:bg-ethGray-200 underline  text-ethBlack-500 text-3xl font-semibold tracking-tight transition-colors first:mt-0"
         disabled={loading}
       >
-        {loading ? "Finding Nearest 5G Networks..." : "Find Nearest 5G Networks"}
+        {loading ? "Finding Nearest Home Addresses..." : "Find Nearest  Home Addresses"}
       </Button>
 
 
@@ -173,13 +173,13 @@ const OpenGoogleMaps = () => {
       {/* List of buttons for nearest sites */}
       <div className=" grid  grid-cols-2 md:grid-cols-3 lg:grid-cols-4 m-4">
         {sitesSorted.map((site) => (
+<>
 
           <Card
             key={site.id}
-            onClick={() =>
-              openGoogleMaps(parseFloat(site.location?.latitude?.toString() ?? '0'), parseFloat(site.location?.longitude?.toString() ?? '0'))
-            }
-         className="m-4 bg-transparent hover:bg-ethGray-100"
+           
+            
+         className="m-4  bg-ethLime-300 hover:bg-ethLime-400 w-[350px]"
           >
   <CardHeader>
 <CardTitle>custemer name </CardTitle>
@@ -192,10 +192,17 @@ const OpenGoogleMaps = () => {
   </CardContent>
 
   <CardFooter>
-    <p className="flex items-center gap-1"><MapPinned color="#8DC63F" /> Map</p>
+
+    <Button  onClick={() =>
+              openGoogleMaps(parseFloat(site.location?.latitude?.toString() ?? '0'), parseFloat(site.location?.longitude?.toString() ?? '0'))
+            } className='w-full  bg-ethGray-400 hover:bg-ethGray-500 '>
+      
+    <p className="flex  justify-between items-center gap-1 w-full text-ethBlack-500"><MapPinned color="#8DC63F" /> Map</p>
+
+    </Button>
   </CardFooter>
           </Card>
-
+          </>
         ))}
       </div>
       <div className="mb-40"></div>
