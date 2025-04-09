@@ -55,7 +55,7 @@ export default function TTListPage() {
 <Alert className={tt.location ? 'bg-ethGreen-300' : 'bg-ethGreen-200'}>
 
       <Terminal className="h-4 w-4" />
-      <AlertTitle>Heads up!</AlertTitle>
+      <AlertTitle>Customer Name</AlertTitle>
       <AlertDescription>
       <p><strong>TT:</strong> {tt.tt}</p>
               <p><strong>Phone:</strong> {tt.customerPhone}</p>

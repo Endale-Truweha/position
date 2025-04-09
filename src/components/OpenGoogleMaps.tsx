@@ -22,6 +22,7 @@ import {
 import { useEffect, useState } from "react";
 import { MapPinned } from "lucide-react";
 import { Site, fetchSites} from '@/lib/data';
+import clsx from "clsx";
 
 // Define your site interface and list (you can import this from your existing file)
 
@@ -175,12 +176,14 @@ const OpenGoogleMaps = () => {
         {sitesSorted.map((site) => (
 <>
 
-          <Card
-            key={site.id}
-           
-            
-         className="m-4  bg-ethLime-300 hover:bg-ethLime-400 w-[350px]"
-          >
+<Card
+  key={site.id}
+  className={clsx(
+    'm-4 w-[350px] ',
+    site.location ? 'bg-ethGreen-300 hover:bg-ethGreen-400' : 'bg-ethRed-300'
+  )}
+>
+
   <CardHeader>
 <CardTitle>custemer name </CardTitle>
 <CardDescription>Site ID : {site.id}</CardDescription>
@@ -188,6 +191,8 @@ const OpenGoogleMaps = () => {
 
     
 <CardContent>
+  <p>TT: {site.tt}</p>
+  <p>Customer Phone: {site.customerPhone}</p>
     <p>Distance: {site.distance.toFixed(2)} km</p>
   </CardContent>
 
@@ -195,7 +200,12 @@ const OpenGoogleMaps = () => {
 
     <Button  onClick={() =>
               openGoogleMaps(parseFloat(site.location?.latitude?.toString() ?? '0'), parseFloat(site.location?.longitude?.toString() ?? '0'))
-            } className='w-full  bg-ethGray-400 hover:bg-ethGray-500 '>
+            } 
+            className={clsx(
+              'w-full  bg-ethGray-400 hover:bg-ethGray-500',
+              site.location ? 'block' : 'hidden'
+            )}
+            >
       
     <p className="flex  justify-between items-center gap-1 w-full text-ethBlack-500"><MapPinned color="#8DC63F" /> Map</p>
 
