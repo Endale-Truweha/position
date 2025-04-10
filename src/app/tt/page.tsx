@@ -11,27 +11,41 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@/components/ui/alert"
+import { useQuery } from '@tanstack/react-query'
 
 
 
 export default function TTListPage() {
-  const [ttList, setTtList] = useState<Site[]>([])
-  const [loading, setLoading] = useState(true)
+  
+  
 
-  useEffect(() => {
-    const fetchTTs = async () => {
-      try {
-        fetchSites().then( setTtList);
+ 
+  const fetchList = async (/* { queryKey }: any */) => {
+  
+    // const t = queryKey[1];
+  
+       const response = await fetch("/api/tt");
+       const data = await response.json();
+       console.log(data)
+       return data;
        
-      } catch (err) {
-        console.error('Failed to fetch TTinformation:', err)
-      } finally {
-        setLoading(false)
-      }
+     }
+
+
+     const { isPending, isError, data, error } = useQuery({
+      queryKey: ['requst'],
+      queryFn: fetchList,
+    })
+  
+    if (isPending) {
+      return <span>Loading...</span>
+  
+    }
+  
+    if (isError) {
+      return <span>Error: {error.message}</span>
     }
 
-    fetchTTs()
-  }, [])
 
 
 
@@ -40,19 +54,17 @@ export default function TTListPage() {
 
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
+    <div className="max-w-2xl mx-auto w-full p-6">
       <h1 className="text-2xl font-bold mb-4">All TTinformation Records</h1>
 
-      {loading ? (
-        <p>loading...</p>
-      ) : ttList.length === 0 ? (
+      { data.length === 0 ? (
         <p>No records found.</p>
       ) : (
-        <div className="space-y-4">
-          {ttList.map((tt) => (
+        <div className=" m-auto w-full space-y-4">
+          {data.map((tt: Site) => (
             <div key={tt.id} className="m-4">
 
-<Alert className={tt.location ? 'bg-ethGreen-300' : 'bg-ethGreen-200'}>
+<Alert className={tt.location ? '' : ' border-ethRed-500'}>
 
       <Terminal className="h-4 w-4" />
       <AlertTitle>Customer Name</AlertTitle>

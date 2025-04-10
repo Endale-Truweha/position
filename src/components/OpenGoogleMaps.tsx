@@ -23,7 +23,7 @@ import { useEffect, useState } from "react";
 import { MapPinned } from "lucide-react";
 import { Site, fetchSites} from '@/lib/data';
 import clsx from "clsx";
-
+import { useQuery } from '@tanstack/react-query';
 // Define your site interface and list (you can import this from your existing file)
 
 // Create a new type that includes the distance property
@@ -57,6 +57,11 @@ const OpenGoogleMaps = () => {
   useEffect(() => {
     fetchSites().then(setSites);
   }, []);
+
+
+
+
+
 
   const handleGetLocation = () => {
     if (!navigator.geolocation) {
@@ -139,7 +144,7 @@ const OpenGoogleMaps = () => {
       className="-z-20 opacity-10"
       /> */}
 
-     <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Find Directions to Residential Customers</h1>
+     <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Field Technician Routing & Navigation System</h1>
       
       {/* Button to trigger geolocation */}
       <div className=" grid grid-cols-1 md:grid-cols-2  place-items-center gap-6">
@@ -151,7 +156,7 @@ const OpenGoogleMaps = () => {
        className="rounded-[0] mt-20 scroll-m-20 border-b px-6  py-6 bg-transparent hover:bg-ethGray-200 underline  text-ethBlack-500 text-3xl font-semibold tracking-tight transition-colors first:mt-0"
         disabled={loading}
       >
-        {loading ? "Finding Nearest Home Addresses..." : "Find Nearest  Home Addresses"}
+        {loading ? "Finding  Home Addresses..." : "Find  Home Addresses"}
       </Button>
 
 
@@ -172,7 +177,7 @@ const OpenGoogleMaps = () => {
 
       </div>
       {/* List of buttons for nearest sites */}
-      <div className=" grid  grid-cols-2 md:grid-cols-3 lg:grid-cols-4 m-4">
+      <div className=" grid  grid-cols-1 md:grid-cols-2 lg:grid-cols-3 place-items-center gap-4 ">
         {sitesSorted.map((site) => (
 <>
 
@@ -180,7 +185,7 @@ const OpenGoogleMaps = () => {
   key={site.id}
   className={clsx(
     'm-4 w-[350px] ',
-    site.location ? 'bg-ethGreen-300 hover:bg-ethGreen-400' : 'bg-ethRed-300'
+    site.location ? '  shadow-2xl shadow-ethGreen-300    hover:bg-ethGray-300' : '    shadow-2xl shadow-ethRed-300  hover:bg-ethGray-300'
   )}
 >
 
