@@ -145,7 +145,7 @@ const Footer: React.FC = () => {
       </div>
       <div >
         
-        <span className='mr-2   '>© 2023 </span> 
+        <span className='mr-2   '>© 2025 </span> 
          <a   href="https://www.ethiotelecom.et" target="_blank" rel="noreferrer noopener">
           Ethiotelecom.
          </a>

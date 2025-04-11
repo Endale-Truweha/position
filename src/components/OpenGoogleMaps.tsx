@@ -1,16 +1,18 @@
 'use client';
-/* import Image from 'next/image' */
-import { Button } from "@/components/ui/button"
 
+import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import clsx from "clsx";
+import { MapPinned } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-
-
+} from "@/components/ui/select";
 import {
   Card,
   CardContent,
@@ -18,50 +20,44 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { useEffect, useState } from "react";
-import { MapPinned } from "lucide-react";
-import { Site, fetchSites} from '@/lib/data';
-import clsx from "clsx";
-import { useQuery } from '@tanstack/react-query';
-// Define your site interface and list (you can import this from your existing file)
+} from "@/components/ui/card";
 
-// Create a new type that includes the distance property
-interface SiteWithDistance extends Site {
-  distance: number; // Add the distance property temporarily
-}
+import { Site } from "@/lib/data";
+import Loading from "@/app/loading";
 
-
-// Utility function to convert degrees to radians
+// Utility: Convert degrees to radians
 const toRad = (x: number) => (x * Math.PI) / 180;
 
-// Haversine formula to calculate the distance between two points
+// Haversine formula to calculate distance in kilometers
 const haversine = (lat1: number, lon1: number, lat2: number, lon2: number) => {
-  const R = 6371; // Radius of the Earth in km
+  const R = 6371;
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
   const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.sin(dLat / 2) ** 2 +
     Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    Math.sin(dLon / 2) ** 2;
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c; // Distance in km
+  return R * c;
 };
+
+// Extended site type with distance
+interface SiteWithDistance extends Site {
+  distance: number;
+}
 
 const OpenGoogleMaps = () => {
   const [sitesSorted, setSitesSorted] = useState<SiteWithDistance[]>([]);
-  const [selected, setSelected] = useState("driving") // Default value
+  const [selectedMode, setSelectedMode] = useState("driving");
   const [loading, setLoading] = useState(false);
-  const [sites, setSites] = useState<Site[]>([]);
 
-  useEffect(() => {
-    fetchSites().then(setSites);
-  }, []);
-
-
-
-
-
+  const { isPending, isError, data, error } = useQuery({
+    queryKey: ['sites'],
+    queryFn: async () => {
+      const res = await fetch("/api/tt");
+      return res.json();
+    },
+  });
 
   const handleGetLocation = () => {
     if (!navigator.geolocation) {
@@ -71,34 +67,31 @@ const OpenGoogleMaps = () => {
 
     setLoading(true);
 
-    // Get the user's current location
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const userLat = position.coords.latitude;
         const userLng = position.coords.longitude;
 
-        // Calculate distance and sort sites by proximity
-        const sortedSites = sites
-          .map((site) => {
-            const shopLat = parseFloat(site.location?.latitude?.toString() ?? '0');
-            const shopLng = parseFloat(site.location?.longitude?.toString() ?? '0');
-            
+        const sorted = data
+          .map((site: Site) => {
+            const shopLat = parseFloat(site.location?.latitude ?? "0");
+            const shopLng = parseFloat(site.location?.longitude ?? "0");
             const distance = haversine(userLat, userLng, shopLat, shopLng);
             return { ...site, distance };
           })
-          .sort((a, b) => a.distance - b.distance); // Sort by ascending distance
+          .sort((a:SiteWithDistance, b:SiteWithDistance) => a.distance - b.distance);
 
-        setSitesSorted(sortedSites);
+        setSitesSorted(sorted);
         setLoading(false);
       },
-      (error) => {
-        alert("Unable to retrieve location: " + error.message);
+      (err) => {
+        alert("Unable to retrieve location: " + err.message);
         setLoading(false);
       }
     );
   };
 
-  const openGoogleMaps = (shopLat: number, shopLng: number) => {
+  const openGoogleMaps = (lat: number, lng: number) => {
     if (!navigator.geolocation) {
       alert("Geolocation is not supported by your browser.");
       return;
@@ -106,121 +99,118 @@ const OpenGoogleMaps = () => {
 
     setLoading(true);
 
-    // Get the user's current location to open in Google Maps
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const userLat = position.coords.latitude;
-        const userLng = position.coords.longitude;
+      (pos) => {
+        const userLat = pos.coords.latitude;
+        const userLng = pos.coords.longitude;
 
-        // Construct the URLs based on device type
-     
-        const desktopUrl = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${shopLat},${shopLng}&travelmode=${selected}`;
-
-      
-          window.open(desktopUrl, "_blank");
-        
+        const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${lat},${lng}&travelmode=${selectedMode}`;
+        window.open(mapsUrl, "_blank");
 
         setLoading(false);
       },
-      (error) => {
-        alert("Unable to retrieve location: " + error.message);
+      (err) => {
+        alert("Unable to retrieve location: " + err.message);
         setLoading(false);
       }
     );
   };
 
+  if (isPending) return <span><Loading/></span>;
+  if (isError) return <span>Error: {error.message}</span>;
+
   return (
-    <div className="flex flex-col items-center m-12 container   space-y-7    ">
+    <div className="container mx-auto flex flex-col items-center my-12 space-y-8">
+      <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl text-center">
+        Field Technician Routing & Navigation System
+      </h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 place-items-center mt-6">
+        <Button
+          variant="outline"
+          onClick={handleGetLocation}
+          className="px-6 py-6 text-3xl font-semibold underline bg-transparent hover:bg-ethGray-200 text-ethBlack-500 rounded-none"
+          disabled={loading}
+        >
+          {loading ? "Finding Home Addresses..." : "Find Home Addresses"}
+        </Button>
+
+        <Select value={selectedMode} onValueChange={setSelectedMode}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select travel mode" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="driving">Driving</SelectItem>
+            <SelectItem value="walking">Walking</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
+
+{sitesSorted.length === 0 ? (
+
+  <div>
+  <p className="leading-7 [&:not(:first-child)]:mt-6 m-auto text-center w-1/2">
+    The Field Technician Routing & Navigation System streamlines the process of pinpointing customer-reported network issues. It collects location data automatically, prioritizes problems, and guides technicians straight to the site using Google Maps, minimizing delays, confusion, and travel time.</p>
+
+    </div>
+) : (
+
+<div  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 place-items-center">
 
 
-{/* <Image
-        src={"/5G Logo.png"}
-        alt="Picture of the author"
+
+ { sitesSorted.map((site) => (
+    <Card
+      key={site.id}
+      className={clsx(
+        "m-4 w-[350px] transition-all",
+        site.location
+          ? "border-ethGreen-300 hover:bg-ethGray-300"
+          : "border-ethRed-300 hover:bg-ethGray-300"
+      )}
+    >
+      <CardHeader>
+        <CardTitle>Customer Name</CardTitle>
+        <CardDescription>Site ID: {site.id}</CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <p>TT: {site.tt}</p>
+        <p>Customer Phone: {site.customerPhone}</p>
+        <p>Distance: {site.distance.toFixed(2)} km</p>
+      </CardContent>
+
+      <CardFooter>
+        <Button
+          onClick={() =>
+            openGoogleMaps(
+              parseFloat(site.location?.latitude ?? "0"),
+              parseFloat(site.location?.longitude ?? "0")
+            )
+          }
+          className={clsx(
+            "w-full bg-ethGray-400 hover:bg-ethGray-500",
+            site.location ? "block" : "hidden"
+          )}
+        >
+          <p className="flex items-center justify-between gap-1 w-full text-ethBlack-500">
+            <MapPinned color="#8DC63F" /> Map
+          </p>
+        </Button>
+      </CardFooter>
+    </Card>
+  ))
+}
+  </div>
+)}
+
+
      
-        fill
-        style={{
-          objectFit: 'contain',
-        }}
-      className="-z-20 opacity-10"
-      /> */}
-
-     <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">Field Technician Routing & Navigation System</h1>
-      
-      {/* Button to trigger geolocation */}
-      <div className=" grid grid-cols-1 md:grid-cols-2  place-items-center gap-6">
-        
-      
-      <Button
-      variant="outline"
-        onClick={handleGetLocation}
-       className="rounded-[0] mt-20 scroll-m-20 border-b px-6  py-6 bg-transparent hover:bg-ethGray-200 underline  text-ethBlack-500 text-3xl font-semibold tracking-tight transition-colors first:mt-0"
-        disabled={loading}
-      >
-        {loading ? "Finding  Home Addresses..." : "Find  Home Addresses"}
-      </Button>
-
-
-
-
-
-      <Select value={selected} onValueChange={setSelected}>
-  <SelectTrigger className="w-[180px]">
-    <SelectValue placeholder="Theme" />
-  </SelectTrigger>
-  <SelectContent>
-  <SelectItem value="driving">Driving</SelectItem>
-    <SelectItem value="walking">Walking</SelectItem>
-   
-  </SelectContent>
-</Select>
-
-
       </div>
-      {/* List of buttons for nearest sites */}
-      <div className=" grid  grid-cols-1 md:grid-cols-2 lg:grid-cols-3 place-items-center gap-4 ">
-        {sitesSorted.map((site) => (
-<>
 
-<Card
-  key={site.id}
-  className={clsx(
-    'm-4 w-[350px] ',
-    site.location ? '  shadow-2xl shadow-ethGreen-300    hover:bg-ethGray-300' : '    shadow-2xl shadow-ethRed-300  hover:bg-ethGray-300'
-  )}
->
-
-  <CardHeader>
-<CardTitle>custemer name </CardTitle>
-<CardDescription>Site ID : {site.id}</CardDescription>
-</CardHeader>
-
-    
-<CardContent>
-  <p>TT: {site.tt}</p>
-  <p>Customer Phone: {site.customerPhone}</p>
-    <p>Distance: {site.distance.toFixed(2)} km</p>
-  </CardContent>
-
-  <CardFooter>
-
-    <Button  onClick={() =>
-              openGoogleMaps(parseFloat(site.location?.latitude?.toString() ?? '0'), parseFloat(site.location?.longitude?.toString() ?? '0'))
-            } 
-            className={clsx(
-              'w-full  bg-ethGray-400 hover:bg-ethGray-500',
-              site.location ? 'block' : 'hidden'
-            )}
-            >
-      
-    <p className="flex  justify-between items-center gap-1 w-full text-ethBlack-500"><MapPinned color="#8DC63F" /> Map</p>
-
-    </Button>
-  </CardFooter>
-          </Card>
-          </>
-        ))}
-      </div>
-      <div className="mb-40"></div>
+      <div className="mb-40" />
     </div>
   );
 };
