@@ -39,8 +39,8 @@ export default function LocationPage({ slug }: { slug: string }) {
   }, [router, slug]);
 
   return (
-    <div>
-      <h1>My Post: {slug}</h1>
+    <div className="flex items-center justify-center h-screen  w-screen animate-pulse">
+   
       <p>Getting your location...</p>
     </div>
   );

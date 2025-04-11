@@ -1,7 +1,7 @@
 'use client'
 
-import { fetchSites, Site } from '@/lib/data'
-import { useEffect, useState } from 'react'
+import {  Site } from '@/lib/data'
+
 import {  Terminal } from "lucide-react"
 
 
@@ -12,6 +12,7 @@ import {
   AlertTitle,
 } from "@/components/ui/alert"
 import { useQuery } from '@tanstack/react-query'
+import Loading from '../loading'
 
 
 
@@ -38,7 +39,7 @@ export default function TTListPage() {
     })
   
     if (isPending) {
-      return <span>Loading...</span>
+      return <span><Loading/></span>
   
     }
   

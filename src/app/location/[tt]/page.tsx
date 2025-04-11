@@ -8,7 +8,7 @@ export default async function Page({
     const { tt } = await params
     return (<>
     <LocationPage slug={tt}/> 
-    <div>My Post: {tt}</div>
+   
 
     </>)
     
