@@ -8,6 +8,7 @@ export default function NewTTForm() {
   const [tt, setTt] = useState('')
   const [customerPhone, setCustomerPhone] = useState('')
   const [loading, setLoading] = useState(false)
+  const [ok, setOk] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -21,13 +22,19 @@ export default function NewTTForm() {
 
     setLoading(false)
     if (res.ok) {
-      router.push('/tt') // redirect to TT list page
+      //router.push('/tt') // redirect to TT list page
+      setOk(true)
+
     } else {
       alert('Failed to create TT info')
     }
   }
 
   return (
+    <div>
+       <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">
+      @call center agent can create new TT  and Link 
+    </code>
     <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto mt-8">
       <input
         type="text"
@@ -53,5 +60,12 @@ export default function NewTTForm() {
         {loading ? 'Submitting...' : 'Submit'}
       </button>
     </form>
+
+    {ok===true?  <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold mt-12">
+      https://position-xisx.vercel.app/location/{tt}
+    </code>:""}
+ 
+
+    </div>
   )
 }

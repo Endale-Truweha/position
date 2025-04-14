@@ -55,8 +55,8 @@ export default function TTListPage() {
 
 
   return (
-    <div className="max-w-2xl mx-auto w-full p-6">
-      <h1 className="text-2xl font-bold mb-4">All TTinformation Records</h1>
+    <div className="max-w-2xl mx-auto w-full p-6  mb-40">
+      <h1 className="text-2xl font-bold mb-4">Field Technician Routing & Navigation System Records</h1>
 
       { data.length === 0 ? (
         <p>No records found.</p>
@@ -72,6 +72,10 @@ export default function TTListPage() {
       <AlertDescription>
       <p><strong>TT:</strong> {tt.tt}</p>
               <p><strong>Phone:</strong> {tt.customerPhone}</p>
+              <p><strong>Link:</strong> https://position-xisx.vercel.app/location/{tt.tt}</p>
+              {tt.location ? (<p><strong>Location:</strong> {tt.location?.latitude}, {tt.location?.longitude}</p>) : ""} 
+            
+             
            {/*    
               <Button   onClick={() =>
               openGoogleMaps(parseFloat(tt.location?.latitude?.toString() ?? '0'), parseFloat(tt.location?.longitude?.toString() ?? '0'))
