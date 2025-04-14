@@ -14,11 +14,8 @@ export async function POST(req: Request) {
       );
     }
 
-    console.log("User Location:", latitude, longitude,slug);
-    console.log("Full Data Received:", body);
-
+  
     // TODO: Save to database using Prisma or another method
-
     await prisma.location.upsert({
       where: { TTnumber: slug },
       update: { latitude, longitude },
