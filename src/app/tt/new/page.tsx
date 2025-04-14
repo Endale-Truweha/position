@@ -48,7 +48,7 @@ export default function NewTTForm() {
       <button
         type="submit"
         disabled={loading}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        className=" bg-ethLime-500 text-white px-4 py-2 rounded hover:bg-ethLime-600"
       >
         {loading ? 'Submitting...' : 'Submit'}
       </button>
